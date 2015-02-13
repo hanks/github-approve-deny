@@ -15,6 +15,15 @@
 (function() {
     var comments = document.getElementsByClassName('js-comment-body');
 
+    var approve_reply = '+1';
+    var deny_reply = '-1';
+    var approve_button_label = 'Approve';
+    var deny_button_label = 'Deny';
+    var approve_text_node_msg = 'Approved';
+    var deny_text_node_msg = 'Denied';
+    var approve_button_node_msg = 'Approve';
+    var deny_button_node_msg = 'Deny';
+
     for (var idx = 0; idx < comments.length; idx++) {
         if (!comments[idx].children || comments[idx].children.length == 0) {
             continue;
@@ -25,26 +34,26 @@
             continue;
         }
 
-        if (paragraph.innerHTML.indexOf('+1 Approve') != -1) {
-            paragraph.innerHTML = paragraph.innerHTML.replace('+1 Approve', '');
+        if (paragraph.innerHTML.indexOf(approve_reply) != -1) {
+            paragraph.innerHTML = paragraph.innerHTML.replace(approve_reply, '');
 
             var approval = document.createElement('div');
             approval.className = 'state state-open js-comment-approved';
             approval.style.width = '100%';
-            approval.appendChild(document.createTextNode('Approved'));
+            approval.appendChild(document.createTextNode(approve_text_node_msg));
 
             if (paragraph.firstChild) {
                 paragraph.insertBefore(approval, paragraph.firstChild);
             } else {
                 paragraph.appendChild(approval);
             }
-        } else if (paragraph.innerHTML.indexOf('-1 Deny') != -1) {
-            paragraph.innerHTML = paragraph.innerHTML.replace('-1 Deny', '');
+        } else if (paragraph.innerHTML.indexOf(deny_reply) != -1) {
+            paragraph.innerHTML = paragraph.innerHTML.replace(deny_reply, '');
 
             var denial = document.createElement('div');
             denial.className = 'state state-closed js-comment-denied';
             denial.style.width = '100%';
-            denial.appendChild(document.createTextNode('Denied'));
+            denial.appendChild(document.createTextNode(deny_text_node_msg));
 
             if (paragraph.firstChild) {
                 paragraph.insertBefore(denial, paragraph.firstChild);
@@ -81,13 +90,13 @@
     approveButton.style.padding = '7px';
     approveButton.tabIndex = 5;
     approveButton.onclick = function(e) {
-        commentBody.value = '+1 Approve ' + commentBody.value;
+        commentBody.value = approve_reply + ' ' + commentBody.value;
         newCommentForm.submit();
 
         return false;
     };
 
-    approveButton.appendChild(document.createTextNode('Approve'));
+    approveButton.appendChild(document.createTextNode(approve_button_node_msg));
 
     var denyButton = document.createElement('button');
     denyButton.className = 'button danger js-deny-button';
@@ -95,13 +104,13 @@
     denyButton.style.padding = '7px';
     denyButton.tabIndex = 4;
     denyButton.onclick = function(e) {
-        commentBody.value = '-1 Deny ' + commentBody.value;
+        commentBody.value = deny_reply + ' ' + commentBody.value;
         newCommentForm.submit();
 
         return false;
     };
 
-    denyButton.appendChild(document.createTextNode('Deny'));
+    denyButton.appendChild(document.createTextNode(deny_button_node_msg));
 
     var closeButton = formActions.children[1];
 
