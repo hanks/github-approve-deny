@@ -15,6 +15,8 @@
 (function() {
     var comments = document.getElementsByClassName('js-comment-body');
 
+    var approve_list = []
+
     var approve_reply = '+1';
     var deny_reply = '-1';
     var approve_button_label = 'Approve';
