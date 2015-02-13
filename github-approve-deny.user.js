@@ -12,21 +12,24 @@
 // @updateURL https://raw.github.com/cisox/github-approve-deny/master/github-approve-deny.user.js
 // ==/UserScript==
 
+var approve_reply = '+1';
+var deny_reply = '-1';
+    
+var approve_button_label = 'Approve';
+var deny_button_label = 'Deny';
+    
+var approve_text_node_msg = 'Approved';
+var deny_text_node_msg = 'Denied';
+    
+var approve_button_node_msg = 'Approve';
+var deny_button_node_msg = 'Deny';
+
 (function() {
     var comments = document.getElementsByClassName('js-comment-body');
-
-    var approve_list = []
-
-    var approve_reply = '+1';
-    var deny_reply = '-1';
-    var approve_button_label = 'Approve';
-    var deny_button_label = 'Deny';
-    var approve_text_node_msg = 'Approved';
-    var deny_text_node_msg = 'Denied';
-    var approve_button_node_msg = 'Approve';
-    var deny_button_node_msg = 'Deny';
-
+        
+    // format comments
     for (var idx = 0; idx < comments.length; idx++) {
+        
         if (!comments[idx].children || comments[idx].children.length == 0) {
             continue;
         }
@@ -36,33 +39,34 @@
             continue;
         }
 
+        var commentMsg = '';
+        var className = '';
+        var textNodeMsg = '';
         if (paragraph.innerHTML.indexOf(approve_reply) != -1) {
-            paragraph.innerHTML = paragraph.innerHTML.replace(approve_reply, '');
-
-            var approval = document.createElement('div');
-            approval.className = 'state state-open js-comment-approved';
-            approval.style.width = '100%';
-            approval.appendChild(document.createTextNode(approve_text_node_msg));
-
-            if (paragraph.firstChild) {
-                paragraph.insertBefore(approval, paragraph.firstChild);
-            } else {
-                paragraph.appendChild(approval);
-            }
+            commentMsg = approve_reply;
+            className = 'state state-open js-comment-approved';
+            textNodeMsg = approve_text_node_msg;
         } else if (paragraph.innerHTML.indexOf(deny_reply) != -1) {
-            paragraph.innerHTML = paragraph.innerHTML.replace(deny_reply, '');
+            commentMsg = deny_reply;
+            className = 'state state-open js-comment-approved';
+            textNodeMsg = deny_text_node_msg;
+        }
 
-            var denial = document.createElement('div');
-            denial.className = 'state state-closed js-comment-denied';
-            denial.style.width = '100%';
-            denial.appendChild(document.createTextNode(deny_text_node_msg));
+        if (commentMsg != '') {
+            paragraph.innerHTML = paragraph.innerHTML.replace(commentMsg, '');
+
+            var commentDiv = document.createElement('div');
+            commentDiv.className = className;
+            commentDiv.style.width = '100%';
+            commentDiv.appendChild(document.createTextNode(textNodeMsg));
 
             if (paragraph.firstChild) {
-                paragraph.insertBefore(denial, paragraph.firstChild);
+                paragraph.insertBefore(commentDiv, paragraph.firstChild);
             } else {
-                paragraph.appendChild(denial);
+                paragraph.appendChild(commentDiv);
             }
         }
+
     }
 
     var newCommentForm = document.getElementsByClassName('js-new-comment-form');
@@ -85,6 +89,25 @@
     }
 
     formActions = formActions[0];
+
+    var createButton = function(className, width, padding, tabIndex, reply_msg) {
+        var button = document.createElement('button');
+        button.className = className;
+        button.style.width = width;
+        button.style.padding = padding;
+        button.tabIndex = tabIndex;
+        button.onclick = function(e) {
+            commentBody.value = reply_msg + ' ' + commentBody.value;
+            newCommentForm.submit();
+
+            return false;
+        };
+
+        return button;
+    }
+
+    
+    var approveButton = createButton('');
 
     var approveButton = document.createElement('button');
     approveButton.className = 'button primary js-approve-button';
