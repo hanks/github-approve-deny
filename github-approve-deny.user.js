@@ -12,8 +12,8 @@
 // @updateURL https://raw.github.com/cisox/github-approve-deny/master/github-approve-deny.user.js
 // ==/UserScript==
 
-var approve_reply = '+1';
-var deny_reply = '-1';
+var approve_reply_arr = ['+1 Approve', '+1'];
+var deny_reply_arr = ['-1 Deny', '-1'];
     
 var approve_button_label = 'Approve';
 var deny_button_label = 'Deny';
@@ -42,16 +42,34 @@ var deny_button_node_label = 'Deny';
         var commentLabel = '';
         var className = '';
         var textNodeLabel = '';
-        if (paragraph.innerHTML.indexOf(approve_reply) != -1) {
-            commentLabel = approve_reply;
-            className = 'state state-open js-comment-approved';
-            textNodeLabel = approve_text_node_label;
-        } else if (paragraph.innerHTML.indexOf(deny_reply) != -1) {
-            commentLabel = deny_reply;
-            className = 'state state-closed js-comment-denied';
-            textNodeLabel = deny_text_node_label;
+        var isFind = false;
+
+        // find approve comment firstly
+        var i;
+        for (i = 0; i < approve_reply_arr.length; i++) {
+            if (paragraph.innerHTML.indexOf(approve_reply_arr[i]) != -1) {
+                commentLabel = approve_reply_arr[i];
+                className = 'state state-open js-comment-approved';
+                textNodeLabel = approve_text_node_label;
+                isFind = true;
+                break;
+            }            
         }
 
+        // when find no approve comments, then find deny comments
+        if (!isFind) {
+            for (i = 0; i < deny_reply_arr.length; i++) {
+                if (paragraph.innerHTML.indexOf(deny_reply_arr[i]) != -1) {
+                    commentLabel = deny_reply_arr[i];
+                    className = 'state state-closed js-comment-denied';
+                    textNodeLabel = deny_text_node_label;
+
+                    break;
+                }            
+            }
+        }
+
+        // replace comment with more beautiful approve/deny div
         if (commentLabel != '') {
             paragraph.innerHTML = paragraph.innerHTML.replace(commentLabel, '');
 
@@ -91,6 +109,7 @@ var deny_button_node_label = 'Deny';
         button.style.padding = padding;
         button.tabIndex = tabIndex;
         button.onclick = function(e) {
+            // closure variables
             commentBody.value = reply_label + ' ' + commentBody.value;
             newCommentForm.submit();
 
@@ -105,7 +124,7 @@ var deny_button_node_label = 'Deny';
                                      '86px',
                                      '7px',
                                      5,
-                                     approve_reply);
+                                     approve_reply_arr[0]);
 
     approveButton.appendChild(document.createTextNode(approve_button_node_label));
 
@@ -114,7 +133,7 @@ var deny_button_node_label = 'Deny';
                                   '61px',
                                   '7px',
                                   4,
-                                  deny_reply);
+                                  deny_reply_arr[0]);
 
     denyButton.appendChild(document.createTextNode(deny_button_node_label));
 
