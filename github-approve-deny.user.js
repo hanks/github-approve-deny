@@ -113,7 +113,8 @@ var deny_button_node_label = 'Deny';
             commentBody.value = reply_label + ' ' + commentBody.value;
             newCommentForm.submit();
 
-            return false;
+            // return ture will clear comment after submit
+            return true;
         };
 
         return button;
