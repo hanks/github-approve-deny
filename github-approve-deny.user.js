@@ -1,21 +1,35 @@
 // ==UserScript==
-// @name GitHub Approve/Deny
-// @namespace http://github.com/cisox/github-approve-deny
+// @name GitHub Approve/Deny Plus
+// @namespace https://github.com/hanks/github-approve-deny
 // @description Adds Approve and Deny buttons to GitHub pull requests and parses pull request comments for Approve/Deny text.
 // @match https://github.com/*/*/pull/*
 // @match http://github.com/*/*/pull/*
 // @match https://www.github.com/*/*/pull/*
 // @match http://www.github.com/*/*/pull/*
-// @version 1.1
-// @icon https://raw.github.com/cisox/github-approve-deny/master/github.png
-// @downloadURL https://raw.github.com/cisox/github-approve-deny/master/github-approve-deny.user.js
+// @version 1.0
+// @icon https://raw.githubusercontent.com/hanks/github-approve-deny/master/github.png
+// @downloadURL https://github.com/hanks/github-approve-deny/raw/master/github-approve-deny.user.js
 // @updateURL https://raw.github.com/cisox/github-approve-deny/master/github-approve-deny.user.js
 // ==/UserScript==
 
+var approve_reply_arr = ['+1 Approve', '+1'];
+var deny_reply_arr = ['-1 Deny', '-1'];
+    
+var approve_button_label = 'Approve';
+var deny_button_label = 'Deny';
+    
+var approve_text_node_label = 'Approved';
+var deny_text_node_label = 'Denied';
+    
+var approve_button_node_label = 'Approve';
+var deny_button_node_label = 'Deny';
+
 (function() {
     var comments = document.getElementsByClassName('js-comment-body');
-
+        
+    // format comments
     for (var idx = 0; idx < comments.length; idx++) {
+        
         if (!comments[idx].children || comments[idx].children.length == 0) {
             continue;
         }
@@ -25,33 +39,52 @@
             continue;
         }
 
-        if (paragraph.innerHTML.indexOf('+1 Approve') != -1) {
-            paragraph.innerHTML = paragraph.innerHTML.replace('+1 Approve', '');
+        var commentLabel = '';
+        var className = '';
+        var textNodeLabel = '';
+        var isFind = false;
 
-            var approval = document.createElement('div');
-            approval.className = 'state state-open js-comment-approved';
-            approval.style.width = '100%';
-            approval.appendChild(document.createTextNode('Approved'));
+        // find approve comment firstly
+        var i;
+        for (i = 0; i < approve_reply_arr.length; i++) {
+            if (paragraph.innerHTML.indexOf(approve_reply_arr[i]) != -1) {
+                commentLabel = approve_reply_arr[i];
+                className = 'state state-open js-comment-approved';
+                textNodeLabel = approve_text_node_label;
+                isFind = true;
+                break;
+            }            
+        }
 
-            if (paragraph.firstChild) {
-                paragraph.insertBefore(approval, paragraph.firstChild);
-            } else {
-                paragraph.appendChild(approval);
-            }
-        } else if (paragraph.innerHTML.indexOf('-1 Deny') != -1) {
-            paragraph.innerHTML = paragraph.innerHTML.replace('-1 Deny', '');
+        // when find no approve comments, then find deny comments
+        if (!isFind) {
+            for (i = 0; i < deny_reply_arr.length; i++) {
+                if (paragraph.innerHTML.indexOf(deny_reply_arr[i]) != -1) {
+                    commentLabel = deny_reply_arr[i];
+                    className = 'state state-closed js-comment-denied';
+                    textNodeLabel = deny_text_node_label;
 
-            var denial = document.createElement('div');
-            denial.className = 'state state-closed js-comment-denied';
-            denial.style.width = '100%';
-            denial.appendChild(document.createTextNode('Denied'));
-
-            if (paragraph.firstChild) {
-                paragraph.insertBefore(denial, paragraph.firstChild);
-            } else {
-                paragraph.appendChild(denial);
+                    break;
+                }            
             }
         }
+
+        // replace comment with more beautiful approve/deny div
+        if (commentLabel != '') {
+            paragraph.innerHTML = paragraph.innerHTML.replace(commentLabel, '');
+
+            var commentDiv = document.createElement('div');
+            commentDiv.className = className;
+            commentDiv.style.width = '100%';
+            commentDiv.appendChild(document.createTextNode(textNodeLabel));
+
+            if (paragraph.firstChild) {
+                paragraph.insertBefore(commentDiv, paragraph.firstChild);
+            } else {
+                paragraph.appendChild(commentDiv);
+            }
+        }
+
     }
 
     var newCommentForm = document.getElementsByClassName('js-new-comment-form');
@@ -61,6 +94,7 @@
 
     newCommentForm = newCommentForm[0];
 
+    // bind approve button action with comment
     var commentBody = newCommentForm.getElementsByClassName('js-comment-field');
     if (!commentBody || commentBody.length == 0) {
         return;
@@ -68,40 +102,49 @@
 
     commentBody = commentBody[0];
 
+    var createButton = function(className, width, padding, tabIndex, reply_label) {
+        var button = document.createElement('button');
+        button.className = className;
+        button.style.width = width;
+        button.style.padding = padding;
+        button.tabIndex = tabIndex;
+        button.onclick = function(e) {
+            // rewrite comment with new format
+            commentBody.value = reply_label + ' ' + commentBody.value;
+            newCommentForm.submit();
+
+            // return ture will clear comment after submit
+            return true;
+        };
+
+        return button;
+    }
+
+    // create approve button
+    var approveButton = createButton('button primary js-approve-button',
+                                     '86px',
+                                     '7px',
+                                     5,
+                                     approve_reply_arr[0]);
+
+    approveButton.appendChild(document.createTextNode(approve_button_node_label));
+
+    // create deny button
+    var denyButton = createButton('button danger js-deny-button',
+                                  '61px',
+                                  '7px',
+                                  4,
+                                  deny_reply_arr[0]);
+
+    denyButton.appendChild(document.createTextNode(deny_button_node_label));
+
+    // rerange close button position 
     var formActions = newCommentForm.getElementsByClassName('form-actions');
     if (!formActions || formActions.length == 0) {
         return;
     }
 
     formActions = formActions[0];
-
-    var approveButton = document.createElement('button');
-    approveButton.className = 'button primary js-approve-button';
-    approveButton.style.width = '86px';
-    approveButton.style.padding = '7px';
-    approveButton.tabIndex = 5;
-    approveButton.onclick = function(e) {
-        commentBody.value = '+1 Approve ' + commentBody.value;
-        newCommentForm.submit();
-
-        return false;
-    };
-
-    approveButton.appendChild(document.createTextNode('Approve'));
-
-    var denyButton = document.createElement('button');
-    denyButton.className = 'button danger js-deny-button';
-    denyButton.style.width = '61px';
-    denyButton.style.padding = '7px';
-    denyButton.tabIndex = 4;
-    denyButton.onclick = function(e) {
-        commentBody.value = '-1 Deny ' + commentBody.value;
-        newCommentForm.submit();
-
-        return false;
-    };
-
-    denyButton.appendChild(document.createTextNode('Deny'));
 
     var closeButton = formActions.children[1];
 
