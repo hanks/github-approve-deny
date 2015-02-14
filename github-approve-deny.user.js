@@ -109,7 +109,7 @@ var deny_button_node_label = 'Deny';
         button.style.padding = padding;
         button.tabIndex = tabIndex;
         button.onclick = function(e) {
-            // closure variables
+            // rewrite comment with new format
             commentBody.value = reply_label + ' ' + commentBody.value;
             newCommentForm.submit();
 
