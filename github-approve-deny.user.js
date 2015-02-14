@@ -18,11 +18,11 @@ var deny_reply = '-1';
 var approve_button_label = 'Approve';
 var deny_button_label = 'Deny';
     
-var approve_text_node_msg = 'Approved';
-var deny_text_node_msg = 'Denied';
+var approve_text_node_label = 'Approved';
+var deny_text_node_label = 'Denied';
     
-var approve_button_node_msg = 'Approve';
-var deny_button_node_msg = 'Deny';
+var approve_button_node_label = 'Approve';
+var deny_button_node_label = 'Deny';
 
 (function() {
     var comments = document.getElementsByClassName('js-comment-body');
@@ -39,26 +39,26 @@ var deny_button_node_msg = 'Deny';
             continue;
         }
 
-        var commentMsg = '';
+        var commentLabel = '';
         var className = '';
-        var textNodeMsg = '';
+        var textNodeLabel = '';
         if (paragraph.innerHTML.indexOf(approve_reply) != -1) {
-            commentMsg = approve_reply;
+            commentLabel = approve_reply;
             className = 'state state-open js-comment-approved';
-            textNodeMsg = approve_text_node_msg;
+            textNodeLabel = approve_text_node_label;
         } else if (paragraph.innerHTML.indexOf(deny_reply) != -1) {
-            commentMsg = deny_reply;
-            className = 'state state-open js-comment-approved';
-            textNodeMsg = deny_text_node_msg;
+            commentLabel = deny_reply;
+            className = 'state state-closed js-comment-denied';
+            textNodeLabel = deny_text_node_label;
         }
 
-        if (commentMsg != '') {
-            paragraph.innerHTML = paragraph.innerHTML.replace(commentMsg, '');
+        if (commentLabel != '') {
+            paragraph.innerHTML = paragraph.innerHTML.replace(commentLabel, '');
 
             var commentDiv = document.createElement('div');
             commentDiv.className = className;
             commentDiv.style.width = '100%';
-            commentDiv.appendChild(document.createTextNode(textNodeMsg));
+            commentDiv.appendChild(document.createTextNode(textNodeLabel));
 
             if (paragraph.firstChild) {
                 paragraph.insertBefore(commentDiv, paragraph.firstChild);
@@ -76,6 +76,7 @@ var deny_button_node_msg = 'Deny';
 
     newCommentForm = newCommentForm[0];
 
+    // bind approve button action with comment
     var commentBody = newCommentForm.getElementsByClassName('js-comment-field');
     if (!commentBody || commentBody.length == 0) {
         return;
@@ -83,21 +84,14 @@ var deny_button_node_msg = 'Deny';
 
     commentBody = commentBody[0];
 
-    var formActions = newCommentForm.getElementsByClassName('form-actions');
-    if (!formActions || formActions.length == 0) {
-        return;
-    }
-
-    formActions = formActions[0];
-
-    var createButton = function(className, width, padding, tabIndex, reply_msg) {
+    var createButton = function(className, width, padding, tabIndex, reply_label) {
         var button = document.createElement('button');
         button.className = className;
         button.style.width = width;
         button.style.padding = padding;
         button.tabIndex = tabIndex;
         button.onclick = function(e) {
-            commentBody.value = reply_msg + ' ' + commentBody.value;
+            commentBody.value = reply_label + ' ' + commentBody.value;
             newCommentForm.submit();
 
             return false;
@@ -106,36 +100,31 @@ var deny_button_node_msg = 'Deny';
         return button;
     }
 
-    
-    var approveButton = createButton('');
+    // create approve button
+    var approveButton = createButton('button primary js-approve-button',
+                                     '86px',
+                                     '7px',
+                                     5,
+                                     approve_reply);
 
-    var approveButton = document.createElement('button');
-    approveButton.className = 'button primary js-approve-button';
-    approveButton.style.width = '86px';
-    approveButton.style.padding = '7px';
-    approveButton.tabIndex = 5;
-    approveButton.onclick = function(e) {
-        commentBody.value = approve_reply + ' ' + commentBody.value;
-        newCommentForm.submit();
+    approveButton.appendChild(document.createTextNode(approve_button_node_label));
 
-        return false;
-    };
+    // create deny button
+    var denyButton = createButton('button danger js-deny-button',
+                                  '61px',
+                                  '7px',
+                                  4,
+                                  deny_reply);
 
-    approveButton.appendChild(document.createTextNode(approve_button_node_msg));
+    denyButton.appendChild(document.createTextNode(deny_button_node_label));
 
-    var denyButton = document.createElement('button');
-    denyButton.className = 'button danger js-deny-button';
-    denyButton.style.width = '61px';
-    denyButton.style.padding = '7px';
-    denyButton.tabIndex = 4;
-    denyButton.onclick = function(e) {
-        commentBody.value = deny_reply + ' ' + commentBody.value;
-        newCommentForm.submit();
+    // rerange close button position 
+    var formActions = newCommentForm.getElementsByClassName('form-actions');
+    if (!formActions || formActions.length == 0) {
+        return;
+    }
 
-        return false;
-    };
-
-    denyButton.appendChild(document.createTextNode(deny_button_node_msg));
+    formActions = formActions[0];
 
     var closeButton = formActions.children[1];
 
