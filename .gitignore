@@ -1,4 +1,3 @@
-dist/
-*.crx
-*.pem
+*.zip
+dist/*.pem
 .DS_Store
