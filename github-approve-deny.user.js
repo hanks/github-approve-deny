@@ -9,7 +9,7 @@
 // @version 1.0
 // @icon https://raw.githubusercontent.com/hanks/github-approve-deny/master/github.png
 // @downloadURL https://github.com/hanks/github-approve-deny/raw/master/github-approve-deny.user.js
-// @updateURL https://raw.github.com/cisox/github-approve-deny/master/github-approve-deny.user.js
+// @updateURL https://github.com/hanks/github-approve-deny/raw/master/github-approve-deny.user.js
 // ==/UserScript==
 
 var approve_reply_arr = ['+1 Approve', '+1'];
