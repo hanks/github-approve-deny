@@ -17,7 +17,9 @@ Because I use Firefox as the default browser, not Chrome, but my teammates all u
 ![demo](https://raw.githubusercontent.com/hanks/github-approve-deny/master/demo/demo.gif)
 
 ## Installation  
-**Not publish to Chrome Store yet.** Just download [.crx](https://github.com/hanks/github-approve-deny/raw/master/dist/github-approve-deny.crx), and drop to Chrome to install.  
+**Not publish to Chrome Store yet.**  
+1. Remove the original extension if you installed. And press Command+Shift+Delete to check **Cached images and files** to clear your Chrome cache.   
+2. Just download [.crx](https://github.com/hanks/github-approve-deny/raw/master/dist/github-approve-deny.crx), and drop to Chrome to install.  
 
 ## Credits  
 Thanks to the original author -- [cisox](https://github.com/cisox/github-approve-deny) for this cool tool.
