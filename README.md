@@ -19,7 +19,8 @@ Because I use Firefox as the default browser, not Chrome, but my teammates all u
 ## Installation  
 **Not publish to Chrome Store yet.**  
 1. Remove the original extension if you installed. And press Command+Shift+Delete to check **Cached images and files** to clear your Chrome cache.   
-2. Just download [.crx](https://github.com/hanks/github-approve-deny/raw/master/dist/github-approve-deny.crx), and drop to Chrome to install.  
+2. Access link **chrome://extensions/** in your Chrome to open your extension management page  
+3. Just download [.crx](https://github.com/hanks/github-approve-deny/raw/master/dist/github-approve-deny.crx), and drop to the page above to install.  
 
 ## Credits  
 Thanks to the original author -- [cisox](https://github.com/cisox/github-approve-deny) for this cool tool.
