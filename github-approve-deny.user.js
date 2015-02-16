@@ -125,7 +125,7 @@ var deny_button_node_label = 'Deny';
                                      '86px',
                                      '7px',
                                      5,
-                                     approve_reply_arr[0]);
+                                     approve_reply_arr[1]);
 
     approveButton.appendChild(document.createTextNode(approve_button_node_label));
 
@@ -134,7 +134,7 @@ var deny_button_node_label = 'Deny';
                                   '61px',
                                   '7px',
                                   4,
-                                  deny_reply_arr[0]);
+                                  deny_reply_arr[1]);
 
     denyButton.appendChild(document.createTextNode(deny_button_node_label));
 
