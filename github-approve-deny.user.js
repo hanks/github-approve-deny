@@ -42,7 +42,7 @@ var deny_button_node_label = 'Deny';
         var commentLabel = '';
         var className = '';
         var textNodeLabel = '';
-        var isFind = false;
+        var isFindApprove = false;
 
         // find approve comment firstly
         var i;
@@ -52,15 +52,15 @@ var deny_button_node_label = 'Deny';
                 commentLabel = approve_reply_arr[i];
                 className = 'state state-open js-comment-approved';
                 textNodeLabel = approve_text_node_label;
-                isFind = true;
+                isFindApprove = true;
                 break;
             }            
         }
 
         // when find no approve comments, then find deny comments
-        if (!isFind) {
+        if (!isFindApprove) {
             for (i = 0; i < deny_reply_arr.length; i++) {
-                if (paragraph.innerHTML.indexOf(deny_reply_arr[i]) != -1) {
+                if (paragraph.innerHTML.indexOf(deny_reply_arr[i]) == 0) {
                     commentLabel = deny_reply_arr[i];
                     className = 'state state-closed js-comment-denied';
                     textNodeLabel = deny_text_node_label;
