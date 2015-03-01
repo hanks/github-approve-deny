@@ -6,7 +6,7 @@
 // @match http://github.com/*/*/pull/*
 // @match https://www.github.com/*/*/pull/*
 // @match http://www.github.com/*/*/pull/*
-// @version 1.0
+// @version 1.1
 // @icon https://raw.githubusercontent.com/hanks/github-approve-deny/master/github.png
 // @downloadURL https://github.com/hanks/github-approve-deny/raw/master/github-approve-deny.user.js
 // @updateURL https://github.com/hanks/github-approve-deny/raw/master/github-approve-deny.user.js
@@ -47,7 +47,8 @@ var deny_button_node_label = 'Deny';
         // find approve comment firstly
         var i;
         for (i = 0; i < approve_reply_arr.length; i++) {
-            if (paragraph.innerHTML.indexOf(approve_reply_arr[i]) != -1) {
+            // detect key word at the begining of sentence
+            if (paragraph.innerHTML.indexOf(approve_reply_arr[i]) == 0) {
                 commentLabel = approve_reply_arr[i];
                 className = 'state state-open js-comment-approved';
                 textNodeLabel = approve_text_node_label;
